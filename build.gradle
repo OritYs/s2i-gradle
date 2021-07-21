@@ -30,3 +30,28 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+if (!project.hasProperty(("jvmbtInternalClassifier"))) {
+	ext.jvmbInternalClassifier = ''
+}
+if (!project.hasProperty(("jvmbtInternalName"))) {
+	ext.jvmbInternalClassifier = ''
+}
+if (!project.hasProperty(("jvmbInternalVersion"))) {
+	ext.jvmbInternalClassifier = ''
+}
+
+mainClassName = "com.example.TestAppApplication"
+
+task fatJar(type: Jar) {
+	print("running fat jar")
+	manifest.from jar.manifest
+	archiveClassifier = jvmbtInternalClassifier
+	archiveBaseName = jvmbtInternalName
+	version = jvmbtInternalVersion
+
+	dependsOn configurations.runtimeClasspath
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it)}
+	}
+}
